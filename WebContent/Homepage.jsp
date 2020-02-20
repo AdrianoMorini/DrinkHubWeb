@@ -42,8 +42,9 @@ h5 {
 			%>
 			<div id=sponsor>
 			<h3><img src=<%=list.get(i).getImage()%> height="80" width="80" align="left"><%=list.get(i).getName()%></h3><br>
+			<h5><%=list.get(i).getId()%></h5><br>
 			<h5><%=list.get(i).getDate().toString()%></h5><br>
-			<form action="CocktailPostServlet" name="myform" method="GET"><input type="submit" name="id" value="<%=list.get(i).getName()%>"></form><hr>
+			<form action="CocktailPostServlet" name="myform" method="GET"><input type="submit" name="id" value="<%=list.get(i).getId()%>"></form><hr>
 			</div>
 			<%
 		} 
