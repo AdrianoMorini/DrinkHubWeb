@@ -11,7 +11,7 @@ public class SponsorBean {
 	private String time;
 	private static Date timeline;
 	private static int typing;
-	private static String userSponsor;
+	private String userSponsor;
     private int typeSponsor;
     private Date timeSponsor;
 	
@@ -81,7 +81,7 @@ public class SponsorBean {
 	}
 
 	public void setUserSponsor(String userSponsor) {
-		SponsorBean.userSponsor = userSponsor;
+		this.userSponsor = userSponsor;
 	}
 
 	public int getTypeSponsor() {

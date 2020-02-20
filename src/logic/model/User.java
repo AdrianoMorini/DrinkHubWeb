@@ -1,60 +1,60 @@
 package logic.model;
 
 public class User {
-	protected String username;
-    protected String name;
-    protected String surname;
-    protected String image;
-    protected Address address;
+	protected String u;
+    protected String n;
+    protected String s;
+    protected String i;
+    protected Address a;
    
 
-    public User(String username, String name, String surname, 
-    			String image, Address address) {
-        this.setName(name);
-        this.setSurname(surname);
-        this.setUsername(username);
-        this.setImage(image);
-        this.setAddress(address);
+    public User(String u, String n, String s, 
+    			String i, Address a) {
+        this.setName(n);
+        this.setSurname(s);
+        this.setUsername(u);
+        this.setImage(i);
+        this.setAddress(a);
     }
 
 	public void setAddress(Address a) {
-		this.address = a;
+		this.a = a;
 	}
 	
 	public Address getAddress() {
-		return this.address;
+		return this.a;
 	}
 
     public String getUsername() {
-		return username;
+		return u;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setUsername(String u) {
+		this.u = u;
 	}
 
 	public String getName() {
-		return name;
+		return n;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setName(String n) {
+		this.n = n;
 	}
 
 	public String getSurname() {
-		return surname;
+		return s;
 	}
 
-	public void setSurname(String surname) {
-		this.surname = surname;
+	public void setSurname(String s) {
+		this.s = s;
 	}
 	
 	public String getImage() {
-		return image;
+		return i;
 	}
 
-	public void setImage(String image) {
-		this.image = image;
+	public void setImage(String i) {
+		this.i = i;
 	}
 
 }

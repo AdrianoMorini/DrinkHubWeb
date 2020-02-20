@@ -4,7 +4,7 @@ public class BarUserDaoFactory {
 
 	private static BarUserDaoFactory instance = null;
 	
-	public synchronized static final BarUserDaoFactory getInstance() {
+	public  static final synchronized BarUserDaoFactory getInstance() {
 		if (BarUserDaoFactory.instance == null) {
 			BarUserDaoFactory.instance = new BarUserDaoFactory();
 		}
@@ -12,10 +12,9 @@ public class BarUserDaoFactory {
 	}
 	
 	public BarUserDao createUtenteBarDao(String dbType) {
-		switch (dbType) {
-		case "mariaDB":
+		if (dbType == "mariaDB") {
 			return createUtenteBarDaoMDB();
-		default:
+		} else {
 			throw new IllegalArgumentException("The specified database type is not impemented");
 		}
 	}

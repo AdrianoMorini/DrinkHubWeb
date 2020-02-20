@@ -1,7 +1,6 @@
 package logic.dao;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -11,24 +10,24 @@ import logic.model.Ingredient;
 
 public class IngredientDao {
 	
-	private static String pass = "password";
-	private static String user = "root";
-	private static String dburl = "jdbc:mysql://localhost:3306/test";
-		
-		    
+	    
 	private IngredientDao() {
 		throw new IllegalStateException("Utility class");
 	}
 	
 	
 	public static boolean setNewCocktailIngredients(List<Ingredient> ingrList, int id) {
+		
 		Statement stateSet = null;
 		Connection connectionSet = null;
+		DatabaseManager dbMan = MariaDBDatabaseManager.getInstance();
+		
 		try {
 			
-			connectionSet = DriverManager.getConnection(dburl, user, pass);
-            stateSet = connectionSet.createStatement();
-			int lenIngr = ingrList.size();
+			connectionSet = dbMan.openConnection();
+            stateSet = dbMan.openStatement(connectionSet);
+			
+            int lenIngr = ingrList.size();
             for (int i = 0; i < lenIngr; i++) {
             	String mysql = "INSERT INTO test.ingredientCocktail values('" + ingrList.get(i).getName() +
             					"', '" + id + "', '" + ingrList.get(i).getQuantity() + "', '" + 
@@ -37,85 +36,65 @@ public class IngredientDao {
             	res.close();
             }
             
-            stateSet.close();
-            connectionSet.close();
-			
-		} catch (SQLException se) {
-            se.printStackTrace();
+		} catch (SQLException e9) {
+			// Opening connection, or opening statement, or executing query failed
+            e9.printStackTrace();
+    		dbMan.closeStatement(stateSet);
+    		dbMan.closeConnection(connectionSet);
             return false;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        } finally {
-            try {
-                if (stateSet != null)
-                    stateSet.close();
-            } catch (SQLException se2) {
-            	se2.printStackTrace();
-            	return false;
-            }
-            try {
-                if (connectionSet != null)
-                    connectionSet.close();
-            } catch (SQLException se) {
-                se.printStackTrace();
-                return false;
-            }
-		}
-	return true;
+        }
+    
+		dbMan.closeStatement(stateSet);
+		dbMan.closeConnection(connectionSet);
+	
+		return true;
+	
 	}
 	
 	
 	public static boolean removeIngredientByID(int id) {
-		Statement stateSet = null;
-		Connection connectionSet = null;
+		
+		Connection connSet = null;
+		Statement stSet = null;
+		DatabaseManager dbMan = MariaDBDatabaseManager.getInstance();
 		
 		try {
 			
-			connectionSet = DriverManager.getConnection(dburl, user, pass);
-            stateSet = connectionSet.createStatement();
+			connSet = dbMan.openConnection();
+            stSet = dbMan.openStatement(connSet);
 			
             String mysql = "DELETE FROM test.ingredientCocktail where cocktailID = " + id + ";";
-            ResultSet res = stateSet.executeQuery(mysql);
+            ResultSet res = stSet.executeQuery(mysql);
             res.close();
 
-            stateSet.close();
-            connectionSet.close();
-			
 		} catch (SQLException e1) {
+			// Opening connection, or opening statement, or executing query failed
             e1.printStackTrace();
+    		dbMan.closeStatement(stSet);
+    		dbMan.closeConnection(connSet);
             return false;
-        } catch (Exception e2) {
-            e2.printStackTrace();
-            return false;
-        } finally {
-            try {
-                if (stateSet != null)
-                    stateSet.close();
-            } catch (SQLException e3) {
-            	e3.printStackTrace();
-            	return false;
-            }
-            try {
-                if (connectionSet != null)
-                    connectionSet.close();
-            } catch (SQLException e4) {
-                e4.printStackTrace();
-                return false;
-            }
-		}
-	return true;
+        }
+    
+		dbMan.closeStatement(stSet);
+		dbMan.closeConnection(connSet);
+	
+		return true;
+	
 	}
 	
 	
 	public static List<Integer> findIDByIngredientName(String ingredientName) {
-		ArrayList<Integer> idList = new ArrayList<>();
+		
 		Statement stateSet = null;
 		Connection connectionSet = null;
+		DatabaseManager dbMan = MariaDBDatabaseManager.getInstance();
+		
+		ArrayList<Integer> idList = new ArrayList<>();
+		
 		try {
 			
-			connectionSet = DriverManager.getConnection(dburl, user, pass);
-            stateSet = connectionSet.createStatement();
+			connectionSet = dbMan.openConnection();
+            stateSet = dbMan.openStatement(connectionSet);
             
             String mysql = "SELECT cocktailID FROM test.ingredientCocktail where ingredientName = '" + ingredientName + "';";
             ResultSet res = stateSet.executeQuery(mysql);
@@ -128,45 +107,32 @@ public class IngredientDao {
             }
                                     
             res.close();
-            stateSet.close();
-            connectionSet.close();
 			
-		} catch (SQLException e1) {
-            e1.printStackTrace();
-            return idList;
-        } catch (Exception e2) {
+		} catch (SQLException e2) {
+			// Opening connection, or opening statement, or executing query failed
             e2.printStackTrace();
-            return idList;
-        } finally {
-            try {
-                if (stateSet != null)
-                    stateSet.close();
-            } catch (SQLException e3) {
-            	e3.printStackTrace();
-            	return idList;
-            }
-            try {
-                if (connectionSet != null)
-                    connectionSet.close();
-            } catch (SQLException e4) {
-                e4.printStackTrace();
-                return idList;
-            }
-		}
+        }
+    
+		dbMan.closeStatement(stateSet);
+		dbMan.closeConnection(connectionSet);
+		
 		return idList;
+	
 	}
 	
 	
-	public static ArrayList<Ingredient> findIngredientByID(int id) {
+	public static List<Ingredient> findIngredientByID(int id) {
 		
-		ArrayList<Ingredient> ingrList = new ArrayList<>();
 		Statement stateSet = null;
 		Connection connectionSet = null;
+		DatabaseManager dbMan = MariaDBDatabaseManager.getInstance();
+		
+		ArrayList<Ingredient> ingrList = new ArrayList<>();
 		
 		try {
 			
-			connectionSet = DriverManager.getConnection(dburl, user, pass);
-            stateSet = connectionSet.createStatement();
+			connectionSet = dbMan.openConnection();
+            stateSet = dbMan.openStatement(connectionSet);
             
             String mysql = "SELECT * FROM test.ingredientCocktail where cocktailID = " + id + ";";
             ResultSet res = stateSet.executeQuery(mysql);
@@ -182,32 +148,17 @@ public class IngredientDao {
         	}
 
             res.close();
-            stateSet.close();
-            connectionSet.close();
 			
-		} catch (SQLException se) {
-            se.printStackTrace();
-            return ingrList;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ingrList;
-        } finally {
-            try {
-                if (stateSet != null)
-                    stateSet.close();
-            } catch (SQLException se2) {
-            	se2.printStackTrace();
-            	return ingrList;
-            }
-            try {
-                if (connectionSet != null)
-                    connectionSet.close();
-            } catch (SQLException se) {
-                se.printStackTrace();
-                return ingrList;
-            }
-		}
-	return ingrList;
+		} catch (SQLException e3) {
+			// Opening connection, or opening statement, or executing query failed
+            e3.printStackTrace();
+        }
+    
+		dbMan.closeStatement(stateSet);
+		dbMan.closeConnection(connectionSet);
+	
+		return ingrList;
+	
 	}
 
 

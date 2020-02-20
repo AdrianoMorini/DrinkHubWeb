@@ -9,6 +9,8 @@ public class LoginBean {
 	private String surname;
 	private String image;
 	private Address addr;
+	// typeUser --> user: 0, bar: 1, admin: 2
+	private int typeUser;
 
 	public LoginBean() {
 		this.username = "";
@@ -17,6 +19,7 @@ public class LoginBean {
 		this.surname = "";
 		this.image = "";
 		this.setAddr(null);
+		this.typeUser = 0;
 
 	}
 
@@ -66,5 +69,13 @@ public class LoginBean {
 
 	public void setAddr(Address addr) {
 		this.addr = addr;
+	}
+
+	public int getTypeUser() {
+		return typeUser;
+	}
+
+	public void setTypeUser(int t) {
+		this.typeUser = t;
 	}
 }

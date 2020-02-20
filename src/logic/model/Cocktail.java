@@ -11,7 +11,7 @@ public class Cocktail {
 	
 	private String name;
 	private Recipe recipe;
-	private ArrayList<Tag> tags;
+	private List<Tag> tags;
 	private String user; // id of user who posted this cocktail
 	private Date date;
 	private Integer id;
@@ -19,7 +19,7 @@ public class Cocktail {
 	// add rate
 	
 	
-	public Cocktail(String userID, String name, ArrayList<Tag> tagsList, Recipe r,
+	public Cocktail(String userID, String name, List<Tag> tagsList, Recipe r,
 					Date cDate, int cocktailID, String cImage) {
 		this.setCocktailUser(userID);
 		this.setName(name);
@@ -48,7 +48,7 @@ public class Cocktail {
 		return tags;
 	}
 
-	public void setTags(ArrayList<Tag> tagsList) {
+	public void setTags(List<Tag> tagsList) {
 		this.tags = tagsList;
 	}
 	

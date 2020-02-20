@@ -1,6 +1,7 @@
 package logic.bean;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -10,6 +11,9 @@ public class NewCocktailBean {
 	private RecipeBean recipe;
 	private ArrayList<TagBean> tags;
 	private String image;
+	private Date date;
+	private String user;
+	private int id;
 	
 	
 	public NewCocktailBean() {
@@ -52,6 +56,36 @@ public class NewCocktailBean {
 
 	public void setImage(String image) {
 		this.image = image;
+	}
+
+
+	public Date getDate() {
+		return date;
+	}
+
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+
+	public String getUser() {
+		return user;
+	}
+
+
+	public void setUser(String user) {
+		this.user = user;
+	}
+
+
+	public int getId() {
+		return id;
+	}
+
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 }

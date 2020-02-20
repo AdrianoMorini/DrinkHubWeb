@@ -1,7 +1,6 @@
 package logic.dao;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -13,13 +12,9 @@ import logic.model.User;
 
 public class BarUserDaoMariaDBImpl implements BarUserDao {
 
-	
-	private static String pass = "password";
-	private static String user = "root";
-	private static String dburl = "jdbc:mysql://localhost:3306/test";
 	private static BarUserDaoMariaDBImpl instance = null;
 	
-	public synchronized static final BarUserDaoMariaDBImpl getInstance() {
+	public  static final synchronized BarUserDaoMariaDBImpl getInstance() {
 		if (BarUserDaoMariaDBImpl.instance == null) {
 			BarUserDaoMariaDBImpl.instance = new BarUserDaoMariaDBImpl();
 		}
@@ -35,20 +30,18 @@ public class BarUserDaoMariaDBImpl implements BarUserDao {
     	
     	Statement stmt = null;
         Connection conn = null;
-        ArrayList<BarUser> Bar = new ArrayList<BarUser>();
-        
-        try {
-            conn = DriverManager.getConnection(dburl, user, pass);
+        ArrayList<BarUser> bar = new ArrayList<>();
+        DatabaseManager dbMan = MariaDBDatabaseManager.getInstance();
 
-            stmt = conn.createStatement();
+        try {
+            
+        	conn = dbMan.openConnection();
+            stmt = dbMan.openStatement(conn);
+            
             String sql = "SELECT * FROM test.user WHERE isBar = 1;";
             ResultSet rs = stmt.executeQuery(sql);
-
-            if (!rs.first()) {
-                return null;
-            }
             
-            do {
+            while(rs.next()) {
             	
             	String usBUsername = rs.getString("username");
             	String usBI = rs.getString("image");
@@ -61,37 +54,19 @@ public class BarUserDaoMariaDBImpl implements BarUserDao {
             	Address addre = new Address(usBLat, usBLon, usBAddr);
             	BarUser uBar = new BarUser(usBUsername, usBName,
             			usBSurn, usBI, addre, usBb);
-            	Bar.add(uBar);
-            	
-            	
-            	
-            }while(rs.next());
-            
-
+            	bar.add(uBar);
+            }
             rs.close();
-            stmt.close();
-            conn.close();
-        } catch (SQLException se) {
-            se.printStackTrace();
-        } catch (Exception e) {
+            
+        } catch (SQLException e) {
+			// Opening connection, or opening statement, or executing query failed
             e.printStackTrace();
-        } finally {
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException se2) {
-            	se2.printStackTrace();
-            }
-            try {
-                if (conn != null)
-                    conn.close();
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }
+            
         }
-        
-
-        return Bar;
+    
+		dbMan.closeStatement(stmt);
+		dbMan.closeConnection(conn);
+        return bar;
     }
 
 	@Override
@@ -99,20 +74,19 @@ public class BarUserDaoMariaDBImpl implements BarUserDao {
 		
 		Statement stmt = null;
         Connection conn = null;
-        ArrayList<User> Usr = new ArrayList<User>();
+        DatabaseManager dbMan = MariaDBDatabaseManager.getInstance();
+
+        ArrayList<User> usr = new ArrayList<>();
         
         try {
-            conn = DriverManager.getConnection(dburl, user, pass);
-
-            stmt = conn.createStatement();
+          
+        	conn = dbMan.openConnection();
+            stmt = dbMan.openStatement(conn);
             String sql = "SELECT * FROM test.user;";
             ResultSet rs = stmt.executeQuery(sql);
 
-            if (!rs.first()) 
-                return null;
+            while(rs.next()) {
             
-            do {
-            	
             	String username = rs.getString("username");
             	String image = rs.getString("image");
             	Double latitude = rs.getDouble("userLat");
@@ -121,37 +95,19 @@ public class BarUserDaoMariaDBImpl implements BarUserDao {
             	String name = rs.getString("name");
             	String surname = rs.getString("surname");
             	Address addr = new Address(latitude, longitude, address);
-            	User   user = new User(username, name, surname, image, addr);
-            	Usr.add(user);
-            	
-            	
-            	
-            }while(rs.next());
-            
-
+            	User   user1 = new User(username, name, surname, image, addr);
+            	usr.add(user1); 	
+            }
             rs.close();
-            stmt.close();
-            conn.close();
-        } catch (SQLException se) {
-            se.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException se2) {
-            	se2.printStackTrace();
-            }
-            try {
-                if (conn != null)
-                    conn.close();
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }
+            
+        } catch (SQLException e1) {
+			// Opening connection, or opening statement, or executing query failed
+            e1.printStackTrace();
+            
         }
-        
-
-        return Usr;
+    
+		dbMan.closeStatement(stmt);
+		dbMan.closeConnection(conn);
+        return usr;
 	}
 }

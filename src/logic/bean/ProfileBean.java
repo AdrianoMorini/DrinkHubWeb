@@ -7,6 +7,7 @@ public class ProfileBean {
 	private static String image;
 	private static Double longitude;
 	private static Double latitude;
+	private static boolean isBar;
 
 	private ProfileBean() {
 
@@ -58,5 +59,13 @@ public class ProfileBean {
 
 	public static void setLatitude(Double latitude) {
 		ProfileBean.latitude = latitude;
+	}
+
+	public static boolean getIsBar() {
+		return isBar;
+	}
+
+	public static void setIsBar(boolean isBar) {
+		ProfileBean.isBar = isBar;
 	}
 }

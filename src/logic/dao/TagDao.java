@@ -1,7 +1,6 @@
 package logic.dao;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -10,10 +9,6 @@ import java.util.List;
 import logic.model.Tag;
 
 public class TagDao {
-	
-	private static String pass = "password";
-	private static String user = "root";
-	private static String dburl = "jdbc:mysql://localhost:3306/test";
 		
 		    
 	private TagDao() {
@@ -25,12 +20,14 @@ public class TagDao {
 		
 		Statement stateSet = null;
 		Connection connectionSet = null;
+		DatabaseManager dbMan = MariaDBDatabaseManager.getInstance();
 		
 		try {
 			
-			connectionSet = DriverManager.getConnection(dburl, user, pass);
-            stateSet = connectionSet.createStatement();
-			int lenTags = tagList.size();
+			connectionSet = dbMan.openConnection();
+            stateSet = dbMan.openStatement(connectionSet);
+			
+            int lenTags = tagList.size();
             for (int j = 0; j < lenTags; j++) {
             	String mysql = "INSERT INTO test.tagCocktail values('" + tagList.get(j).getTag() +
     							"', '" + id + "');";
@@ -38,86 +35,66 @@ public class TagDao {
             	res.close();
             }
             
-            stateSet.close();
-            connectionSet.close();
-			
-		} catch (SQLException se) {
-            se.printStackTrace();
-            return false;
-        } catch (Exception e) {
+		} catch (SQLException e) {
+			// Opening connection, or opening statement, or executing query failed
             e.printStackTrace();
+    		dbMan.closeStatement(stateSet);
+    		dbMan.closeConnection(connectionSet);
             return false;
-        } finally {
-            try {
-                if (stateSet != null)
-                    stateSet.close();
-            } catch (SQLException se2) {
-            	se2.printStackTrace();
-            	return false;
-            }
-            try {
-                if (connectionSet != null)
-                    connectionSet.close();
-            } catch (SQLException se) {
-                se.printStackTrace();
-                return false;
-            }
-		}
-	return true;		
+        }
+    
+		dbMan.closeStatement(stateSet);
+		dbMan.closeConnection(connectionSet);
+	
+		return true;		
+	
 	}
 	
 	
 	public static boolean removeTagByID(int id) {
-		Statement stateSet = null;
-		Connection connectionSet = null;
+		
+		Connection cSet = null;
+		Statement sSet = null;
+		DatabaseManager dbMan = MariaDBDatabaseManager.getInstance();
 		
 		try {
 			
-			connectionSet = DriverManager.getConnection(dburl, user, pass);
-            stateSet = connectionSet.createStatement();
+			cSet = dbMan.openConnection();
+            sSet = dbMan.openStatement(cSet);
 			
             String mysql = "DELETE FROM test.tagCocktail where cocktailID = " + id + ";";
-            ResultSet res = stateSet.executeQuery(mysql);
+            ResultSet res = sSet.executeQuery(mysql);
             res.close();
 
-            stateSet.close();
-            connectionSet.close();
-			
-		} catch (SQLException e1) {
-            e1.printStackTrace();
+		} catch (SQLException e7) {
+			// Opening connection, or opening statement, or executing query failed
+            e7.printStackTrace();
+    		dbMan.closeStatement(sSet);
+    		dbMan.closeConnection(cSet);
             return false;
-        } catch (Exception e2) {
-            e2.printStackTrace();
-            return false;
-        } finally {
-            try {
-                if (stateSet != null)
-                    stateSet.close();
-            } catch (SQLException e3) {
-            	e3.printStackTrace();
-            	return false;
-            }
-            try {
-                if (connectionSet != null)
-                    connectionSet.close();
-            } catch (SQLException e4) {
-                e4.printStackTrace();
-                return false;
-            }
-		}
-	return true;
+        }
+    
+		dbMan.closeStatement(sSet);
+		dbMan.closeConnection(cSet);
+	
+		return true;
+	
 	}
 	
 
-	public static ArrayList<Tag> findTagByID(int id) {
+	public static List<Tag> findTagByID(int id) {
 		
-		ArrayList<Tag> tagList = new ArrayList<>();
 		Statement stateSet = null;
 		Connection connectionSet = null;
+		DatabaseManager dbMan = MariaDBDatabaseManager.getInstance();
+		
+		ArrayList<Tag> tagList = new ArrayList<>();
+		
 		try {
 			
-			connectionSet = DriverManager.getConnection(dburl, user, pass);
-            stateSet = connectionSet.createStatement();
+			connectionSet = dbMan.openConnection();
+            stateSet = dbMan.openStatement(connectionSet);
+            
             String mysql = "SELECT * FROM test.tagCocktail where cocktailID = " + id + ";";
             ResultSet res = stateSet.executeQuery(mysql);
             
@@ -130,31 +107,14 @@ public class TagDao {
         	}
         
             res.close();
-            stateSet.close();
-            connectionSet.close();
 			
-		} catch (SQLException e1) {
-            e1.printStackTrace();
-            return tagList;
-        } catch (Exception e2) {
+		} catch (SQLException e2) {
+			// Opening connection, or opening statement, or executing query failed
             e2.printStackTrace();
-            return tagList;
-        } finally {
-            try {
-                if (stateSet != null)
-                    stateSet.close();
-            } catch (SQLException e3) {
-            	e3.printStackTrace();
-            	return tagList;
-            }
-            try {
-                if (connectionSet != null)
-                    connectionSet.close();
-            } catch (SQLException e4) {
-                e4.printStackTrace();
-                return tagList;
-            }
-		}
+        }
+    
+		dbMan.closeStatement(stateSet);
+		dbMan.closeConnection(connectionSet);
 	
 		return tagList;
 		
@@ -162,13 +122,17 @@ public class TagDao {
 	
 	
 	public static List<Integer> findIDByTagName(String tagName) {
-		ArrayList<Integer> idList = new ArrayList<>();
-		Statement stateSet = null;
+
 		Connection connectionSet = null;
+		Statement stateSet = null;
+		DatabaseManager dbMan = MariaDBDatabaseManager.getInstance();
+		
+		ArrayList<Integer> idList = new ArrayList<>();
+		
 		try {
 			
-			connectionSet = DriverManager.getConnection(dburl, user, pass);
-            stateSet = connectionSet.createStatement();
+			connectionSet = dbMan.openConnection();
+            stateSet = dbMan.openStatement(connectionSet);
             
             String mysql = "SELECT cocktailID FROM test.tagCocktail where tagName = '" + tagName + "';";
             ResultSet res = stateSet.executeQuery(mysql);
@@ -184,28 +148,14 @@ public class TagDao {
             stateSet.close();
             connectionSet.close();
 			
-		} catch (SQLException se) {
-            se.printStackTrace();
-            return idList;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return idList;
-        } finally {
-            try {
-                if (stateSet != null)
-                    stateSet.close();
-            } catch (SQLException se2) {
-            	se2.printStackTrace();
-            	return idList;
-            }
-            try {
-                if (connectionSet != null)
-                    connectionSet.close();
-            } catch (SQLException se) {
-                se.printStackTrace();
-                return idList;
-            }
-		}
+		} catch (SQLException e3) {
+			// Opening connection, or opening statement, or executing query failed
+            e3.printStackTrace();
+        }
+    
+		dbMan.closeStatement(stateSet);
+		dbMan.closeConnection(connectionSet);
+		
 		return idList;
 	}
 

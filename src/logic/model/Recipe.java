@@ -1,16 +1,15 @@
 package logic.model;
 
 import java.util.List;
-
 import java.util.ArrayList;
 
 
 public class Recipe {
 
-	private ArrayList<Ingredient> ingredients;
+	private List<Ingredient> ingredients;
 	private String procedure;
 	
-	public Recipe(String cocktailProcedure, ArrayList<Ingredient> b) {
+	public Recipe(String cocktailProcedure, List<Ingredient> b) {
 		
 		this.setProcedure(cocktailProcedure);
 		this.ingredients = new ArrayList<>();
@@ -23,7 +22,7 @@ public class Recipe {
 	}
 	
 	
-	public void setIngrList(ArrayList<Ingredient> b) {
+	public void setIngrList(List<Ingredient> b) {
 		this.ingredients = b;
 	}
 

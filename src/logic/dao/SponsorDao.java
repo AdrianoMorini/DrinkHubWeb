@@ -1,14 +1,14 @@
 package logic.dao;
-import java.sql.*;
 
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import logic.bean.SponsorBean;
 import logic.controller.LoginController;
 
 public class SponsorDao {
-	private static String passDatab = "password";
-    private static String userDatab = "root";
-    private static String urlDb = "jdbc:mysql://localhost:3306/test";
-
     
     private SponsorDao() {
         throw new IllegalStateException("Utility class init");
@@ -17,12 +17,15 @@ public class SponsorDao {
     public static void findSponsorByUsername(SponsorBean bean) {
     	Statement state = null;
         Connection connect = null;
+        DatabaseManager dbMan = MariaDBDatabaseManager.getInstance();
+
         int type = 0;
         Date timeline = null;
         try {
-            connect = DriverManager.getConnection(urlDb, userDatab, passDatab);
-
-            state = connect.createStatement();
+            
+            connect = dbMan.openConnection();
+            state = dbMan.openStatement(connect);
+            
             String sql = "SELECT type, timeline FROM test.sponsor where username = '"
                     + bean.getUserSponsor() + "';";
             ResultSet rs = state.executeQuery(sql);
@@ -30,6 +33,8 @@ public class SponsorDao {
             if (!rs.first()) {
             	bean.setTypeSponsor(0);
             	bean.setTimeSponsor(null);
+            	dbMan.closeStatement(state);
+                dbMan.closeConnection(connect);
             	return;
             }
 
@@ -41,28 +46,11 @@ public class SponsorDao {
             timeline = rs.getDate("timeline");
 
             rs.close();
-            state.close();
-            connect.close();
-        } catch (SQLException se1) {
-        	
-        	bean.setTypeSponsor(0);
-        	bean.setTimeSponsor(null);
-            
-        } catch (Exception e1) {
-            e1.printStackTrace();
-        } finally {
-            try {
-                if (state != null)
-                    state.close();
-            } catch (SQLException se1) {
-            	se1.printStackTrace();
-            }
-            try {
-                if (connect != null)
-                    connect.close();
-            } catch (SQLException se1) {
-                se1.printStackTrace();
-            }
+            dbMan.closeStatement(state);
+            dbMan.closeConnection(connect);
+        } catch (SQLException e2) {
+			// Opening connection, or opening statement, or executing query failed
+            e2.printStackTrace();
         }
     	
     	bean.setTypeSponsor(type);
@@ -73,73 +61,47 @@ public class SponsorDao {
     public static boolean setNewSponsor() {
     	Statement stat = null;
         Connection conne = null;
+        DatabaseManager dbMan = MariaDBDatabaseManager.getInstance();
         try {
-            conne = DriverManager.getConnection(urlDb, userDatab, passDatab);
-
-            stat = conne.createStatement();
+        	conne = dbMan.openConnection();
+            stat = dbMan.openStatement(conne);
+            
             LoginController con = LoginController.getInstance();
             String mysql = "INSERT INTO test.sponsor values('" + con.getBean().getUsername() +"','" + SponsorBean.getTyping() + "','" + SponsorBean.getTimeline() + "');";
             ResultSet res = stat.executeQuery(mysql);
 
             res.close();
-            stat.close();
-            conne.close();
-        } catch (SQLException se2) {
-            se2.printStackTrace();
-            return false;
-        } catch (Exception e2) {
-            e2.printStackTrace();
-            return false;
-        } finally {
-            try {
-                if (stat != null)
-                    stat.close();
-            } catch (SQLException se2) {
-            	se2.printStackTrace();
-            	return false;
-            }
-            try {
-                if (conne != null)
-                    conne.close();
-            } catch (SQLException se2) {
-                se2.printStackTrace();
-                return false;
-            }
+            dbMan.closeStatement(stat);
+            dbMan.closeConnection(conne);
+        } catch (SQLException e3) {
+			// Opening connection, or opening statement, or executing query failed
+            e3.printStackTrace();
         }
+        dbMan.closeStatement(stat);
+        dbMan.closeConnection(conne);
         return true;
     }
     
     public static void deleteSponsor() {
-    	Statement state = null;
-        Connection connect = null;
+    	Statement stat = null;
+        Connection conne = null;
+        DatabaseManager dbMan = MariaDBDatabaseManager.getInstance();
         try {
-            connect = DriverManager.getConnection(urlDb, userDatab, passDatab);
-
-            state = connect.createStatement();
-            String sql = "DELETE FROM test.sponsor WHERE (timeline < current_date);";
-            state.executeUpdate(sql);
-
-            state.close();
-            connect.close();
-        } catch (SQLException se3) {
-        	se3.printStackTrace();
+        	conne = dbMan.openConnection();
+            stat = dbMan.openStatement(conne);
             
-        } catch (Exception e3) {
+            String sql = "DELETE FROM test.sponsor WHERE (timeline < current_date);";
+            ResultSet rs = stat.executeQuery(sql);
+
+            rs.close();
+            dbMan.closeStatement(stat);
+            dbMan.closeConnection(conne);
+        } catch (SQLException e3) {
+			// Opening connection, or opening statement, or executing query failed
             e3.printStackTrace();
-        } finally {
-            try {
-                if (state != null)
-                    state.close();
-            } catch (SQLException se3) {
-            	se3.printStackTrace();
-            }
-            try {
-                if (connect != null)
-                    connect.close();
-            } catch (SQLException se3) {
-                se3.printStackTrace();
-            }
         }
+        dbMan.closeStatement(stat);
+        dbMan.closeConnection(conne);
     }
     
     
