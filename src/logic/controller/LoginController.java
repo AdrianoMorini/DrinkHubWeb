@@ -20,7 +20,7 @@ public class LoginController {
     private LoginController() {
     }
     
-    public boolean findIdentity() {
+    public boolean findIdentity() throws ClassNotFoundException {
     	this.bean = UserDao.findByUserAndPassword(this.bean);
     	return (this.bean.getName() != null);
     }

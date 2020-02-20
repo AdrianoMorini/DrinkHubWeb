@@ -14,7 +14,7 @@ public class UserDao {
 	        throw new IllegalStateException("Utility class");
 	    }
 	    
-	    public static LoginBean findByUserAndPassword(LoginBean bean) {
+	    public static LoginBean findByUserAndPassword(LoginBean bean) throws ClassNotFoundException {
 	    	Statement statement = null;
 	        Connection connection = null;
 	        DatabaseManager dbMan = MariaDBDatabaseManager.getInstance();
@@ -28,7 +28,7 @@ public class UserDao {
 	        boolean isAdmin = false;
 	       
 	        try {
-	        	//Class.forName("com.mysql.cj.jdbc.Driver") nella parte web
+	        	Class.forName("com.mysql.cj.jdbc.Driver");
 	        	connection = dbMan.openConnection();
 	            statement = dbMan.openStatement(connection);
 

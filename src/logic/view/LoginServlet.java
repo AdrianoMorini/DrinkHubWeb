@@ -48,34 +48,39 @@ public class LoginServlet extends HttpServlet {
 		LoginBean bean = controller.getBean();
 		bean.setUsername(user);
 		bean.setPassword(pass);
-		if(controller.findIdentity()) {
-			String name = controller.getBean().getName();
-			request.getSession().setAttribute("name",name);
-			System.out.println(request.getSession().getAttribute("name"));
-			SponsorController contr = SponsorController.getInstance();
-	    	contr.cleanSponsorDB();
-	    	CocktailPostController con = CocktailPostController.getInstance();
-	    	con.findSponsoredCocktail();
-	    	if(con.getBean().getPostList() == null) {
-	        	//scrivere 'no posts' e poi refresh della pagina
-	    		request.getSession().setAttribute("postMessage","NO POSTS");
-	    		String nextJSP = "/Homepage.jsp";
+		try {
+			if(controller.findIdentity()) {
+				String name = controller.getBean().getName();
+				request.getSession().setAttribute("name",name);
+				System.out.println(request.getSession().getAttribute("name"));
+				SponsorController contr = SponsorController.getInstance();
+				contr.cleanSponsorDB();
+				CocktailPostController con = CocktailPostController.getInstance();
+				con.findSponsoredCocktail();
+				if(con.getBean().getPostList() == null) {
+			    	//scrivere 'no posts' e poi refresh della pagina
+					request.getSession().setAttribute("postMessage","NO POSTS");
+					String nextJSP = "/Homepage.jsp";
+					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP);
+					dispatcher.forward(request,response);
+			        return;
+			    }
+				else {
+					request.getSession().setAttribute("len",con.getBean().getPostList().size());
+					request.getSession().setAttribute("listSponsor",con.getBean().getPostList());
+				}
+				String nextJSP = "/Homepage.jsp";
 				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP);
 				dispatcher.forward(request,response);
-	            return;
-	        }
-	    	else {
-	    		request.getSession().setAttribute("len",con.getBean().getPostList().size());
-	    		request.getSession().setAttribute("listSponsor",con.getBean().getPostList());
-	    	}
-			String nextJSP = "/Homepage.jsp";
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP);
-			dispatcher.forward(request,response);
-		}
-		else {
-			System.out.println("ERROR");
-			request.getSession().setAttribute("message", "Error. Please try again.");
-			response.sendRedirect(request.getHeader("Referer"));
+			}
+			else {
+				System.out.println("ERROR");
+				request.getSession().setAttribute("message", "Error. Please try again.");
+				response.sendRedirect(request.getHeader("Referer"));
+			}
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

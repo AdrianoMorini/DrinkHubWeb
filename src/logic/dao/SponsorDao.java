@@ -91,9 +91,8 @@ public class SponsorDao {
             stat = dbMan.openStatement(conne);
             
             String sql = "DELETE FROM test.sponsor WHERE (timeline < current_date);";
-            ResultSet rs = stat.executeQuery(sql);
+            stat.executeUpdate(sql);
 
-            rs.close();
             dbMan.closeStatement(stat);
             dbMan.closeConnection(conne);
         } catch (SQLException e3) {
