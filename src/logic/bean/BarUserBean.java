@@ -62,6 +62,7 @@ public class BarUserBean {
 		return barName;
 	}
 
+	
 	public void setBarName(String barName) {
 		this.barName = barName;
 	}
