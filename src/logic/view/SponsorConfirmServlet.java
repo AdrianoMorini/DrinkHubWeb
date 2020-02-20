@@ -40,7 +40,7 @@ public class SponsorConfirmServlet extends HttpServlet {
 			//logged
 			System.out.println("logged as " + request.getSession().getAttribute("name"));
 			String price = (String) request.getSession().getAttribute("pricePreview");
-			System.out.println("quindi il finale è: " + price);
+			System.out.println("quindi il finale e: " + price);
 			if(price.equals("")) {
 				request.getSession().setAttribute("pricePreview","Something goes wrong. Try again.");
 				response.sendRedirect(request.getHeader("Referer"));
